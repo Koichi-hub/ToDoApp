@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using ToDoApp.Models;
+using ToDoApp.Services;
 
 namespace ToDoApp.ViewModels;
 
@@ -22,7 +23,7 @@ public class MainViewModel : ReactiveObject
 
     public ObservableCollection<TaskModel> Tasks { get; set; } = [];
 
-    public MainViewModel()
+    public MainViewModel(TaskPersistenceService taskPersistenceService)
     {
         if (Design.IsDesignMode)
         {
@@ -38,7 +39,11 @@ public class MainViewModel : ReactiveObject
                     IsCompleted = true,
                 },
             ];
+
+            return;
         }
+
+        Tasks = new ObservableCollection<TaskModel>(taskPersistenceService.LoadTasks());
     }
 
     public void CreateTask()
