@@ -1,6 +1,9 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ToDoApp.Models;
 using ToDoApp.Services;
 
@@ -21,29 +24,39 @@ public class MainViewModel : ReactiveObject
         }
     }
 
-    public ObservableCollection<TaskModel> Tasks { get; set; } = [];
+    public ObservableCollection<TaskViewModel> TasksViewModels { get; set; } = [];
 
-    public MainViewModel(TaskPersistenceService taskPersistenceService)
+    public MainViewModel()
     {
         if (Design.IsDesignMode)
         {
-            Tasks =
-            [
+            var tasks = new List<TaskModel>()
+            {
                 new()
                 {
+                    Uid = Guid.NewGuid(),
                     Title = "Sleep"
                 },
                 new()
                 {
+                    Uid = Guid.NewGuid(),
                     Title = "Code",
                     IsCompleted = true,
                 },
-            ];
-
-            return;
+                new()
+                {
+                    Uid = Guid.NewGuid(),
+                    Title = "Very long task title",
+                    IsCompleted = true,
+                },
+            };
+            TasksViewModels = new ObservableCollection<TaskViewModel>(tasks.Select(x => new TaskViewModel(x, DeleteTask)));
         }
+    }
 
-        Tasks = new ObservableCollection<TaskModel>(taskPersistenceService.LoadTasks());
+    public MainViewModel(TaskPersistenceService taskPersistenceService) : this()
+    {
+        TasksViewModels = new ObservableCollection<TaskViewModel>(taskPersistenceService.LoadTasks().Select(x => new TaskViewModel(x, DeleteTask)));
     }
 
     public void CreateTask()
@@ -53,10 +66,17 @@ public class MainViewModel : ReactiveObject
             return;
         }
 
-        Tasks.Add(new()
+        TasksViewModels.Add(new TaskViewModel(new TaskModel
         {
+            Uid = Guid.NewGuid(),
             Title = TaskTitle,
-        });
+        }, DeleteTask));
+
         TaskTitle = string.Empty;
+    }
+
+    private void DeleteTask(TaskViewModel taskViewModel)
+    {
+        TasksViewModels.Remove(taskViewModel);
     }
 }

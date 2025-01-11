@@ -15,12 +15,25 @@
 	<Grid RowDefinitions="Auto, *, Auto" ShowGridLines="True">
 		<TextBlock Grid.Row="0" Padding="5">ToDoApp</TextBlock>
 
-		<ScrollViewer Grid.Row="1" Padding="10">
-			<ItemsControl ItemsSource="{Binding Tasks}">
+		<ScrollViewer Grid.Row="1" Padding="5">
+			<ItemsControl ItemsSource="{Binding TasksViewModels}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<CheckBox IsChecked="{Binding IsCompleted}"
-								  Content="{Binding Title}" />
+						<Border Background="#245c60" Padding="10 5" Margin="0 0 0 10" CornerRadius="10">
+							<Panel>
+								<StackPanel Orientation="Horizontal">
+									<CheckBox IsChecked="{Binding Model.IsCompleted}"/>
+
+									<TextBlock VerticalAlignment="Center" Text="{Binding Model.Title}" />
+								</StackPanel>
+
+								<Button Height="26" Width="26" HorizontalAlignment="Right" Margin="0 0 0 0" CornerRadius="26" Padding="0" 
+										Command="{Binding DeleteTaskCommand}" 
+										CommandParameter="{Binding .}">
+									<Image Height="16" Width="16" Source="/Assets/trash.png" />
+								</Button>
+							</Panel>
+						</Border>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

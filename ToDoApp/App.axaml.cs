@@ -2,6 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using ToDoApp.Extensions;
 using ToDoApp.Services;
 using ToDoApp.ViewModels;
@@ -57,7 +58,7 @@ public partial class App : Application
 
         if (!canCanceled)
         {
-            taskPersistenceService.SaveTasks(mainViewModel.Tasks);
+            taskPersistenceService.SaveTasks(mainViewModel.TasksViewModels.Select(x => x.Model));
 
             canCanceled = true;
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
